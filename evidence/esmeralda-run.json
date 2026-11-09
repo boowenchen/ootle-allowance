@@ -1,0 +1,235 @@
+{
+ "network": "esmeralda",
+ "templates": {
+  "DemoToken": "template_086ae2445e70759e4de5078807d2734a72baa78bc2be14731a25e8f86241aa58",
+  "Allowance": "template_41e446e15712724265acdba3be30fdd72bed7f217f7259f7e0964359001c826b"
+ },
+ "steps": [
+  {
+   "step": "deploy demo token",
+   "signer": "owner",
+   "transaction_id": "0e24c7894a3508579bcc039c9c07d2e626acfc796dea5b0e467b974aef5b2b42",
+   "status": "Accepted",
+   "final_fee": 2952,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:14:33Z"
+  },
+  {
+   "step": "create allowance",
+   "signer": "owner",
+   "transaction_id": "bfb2a4dd66abe04daac0fe010848ded89ac6001e0798fc60e83c5d45811b37e1",
+   "status": "Accepted",
+   "final_fee": 6229,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:14:37Z"
+  },
+  {
+   "step": "fund 50.00 dUSD",
+   "signer": "owner",
+   "transaction_id": "a1e5ffb8ec0f78198e6dd29e585c1f60729928cb2fe88140f0027e5bfacd5b2c",
+   "status": "Accepted",
+   "final_fee": 3479,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:14:44Z"
+  },
+  {
+   "step": "register agent key",
+   "signer": "owner",
+   "transaction_id": "1b248bd90da8efee442812455745334271ed2591588512e2dc14665a84bf5568",
+   "status": "Accepted",
+   "final_fee": 3259,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:14:49Z"
+  },
+  {
+   "step": "allowlist inference API",
+   "signer": "owner",
+   "transaction_id": "47e488b88cd15103a9b323d21152f536f862b85ea4ab42d28de3bafef52f60ed",
+   "status": "Accepted",
+   "final_fee": 3349,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:14:56Z"
+  },
+  {
+   "step": "agent pays 2.50 for call #1",
+   "signer": "agent",
+   "transaction_id": "1223748844ae7358a76c7e99bac6178868d281030f0d20c55644eb724b9c88e9",
+   "status": "Accepted",
+   "final_fee": 4881,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:15:02Z"
+  },
+  {
+   "step": "agent pays 2.50 for call #2",
+   "signer": "agent",
+   "transaction_id": "f6e3ea21086fca7e45faebfbaecabbc59df74ad9787ea8aeb02e9d7145014bcc",
+   "status": "Accepted",
+   "final_fee": 4098,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:15:08Z"
+  },
+  {
+   "step": "over the per-payment cap (6.00) is refused",
+   "signer": "agent",
+   "transaction_id": "4a36860814dbcfe3813429552db8ea8a81828f656ed80104302eeea87ef3dd48",
+   "status": "OnlyFeeAccepted",
+   "final_fee": 2080,
+   "accepted": false,
+   "expected_ok": false,
+   "reason": "{\"code\": \"TemplateError\", \"message\": \"At instruction #1: Template error: Amount exceeds the per-payment cap\"}",
+   "time": "2026-11-09T00:15:16Z"
+  },
+  {
+   "step": "unlisted payee is refused",
+   "signer": "agent",
+   "transaction_id": "0a59c84ad493f94f8a1b566d3c045666c9e4ebb3682355d805dd4cec2d314cf0",
+   "status": "OnlyFeeAccepted",
+   "final_fee": 2115,
+   "accepted": false,
+   "expected_ok": false,
+   "reason": "{\"code\": \"TemplateError\", \"message\": \"At instruction #1: Template error: Payee is not allowlisted\"}",
+   "time": "2026-11-09T00:15:22Z"
+  },
+  {
+   "step": "agent files a 20.00 request to the GPU vendor",
+   "signer": "agent",
+   "transaction_id": "3cd4f7244430a8f43ad65a1d7dc94472dc40c741e2279d238300e1ed8ff2efee",
+   "status": "Accepted",
+   "final_fee": 3194,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:15:28Z"
+  },
+  {
+   "step": "agent cannot approve its own request",
+   "signer": "agent",
+   "transaction_id": "1f762738e90179f1a593d2a407644bab3bc6911276934f679e2aa7e9694777be",
+   "status": "OnlyFeeAccepted",
+   "final_fee": 1829,
+   "accepted": false,
+   "expected_ok": false,
+   "reason": "{\"code\": \"AccessDenied\", \"message\": \"At instruction #1: Access Denied: call component method 'approve' on component_a759f048344c22efe92872dd7222d79058eda5d39e500667d2bf4954db0276c1\"}",
+   "time": "2026-11-09T00:15:32Z"
+  },
+  {
+   "step": "owner approves request #1",
+   "signer": "owner",
+   "transaction_id": "4c3077255d3da3f41febe3e86090da29f2237ac6cdec23b2f95f3b9788d11865",
+   "status": "Accepted",
+   "final_fee": 5217,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:15:38Z"
+  },
+  {
+   "step": "panic freeze by the agent",
+   "signer": "agent",
+   "transaction_id": "46ca4faea479725b842f9df113de39d1e7e9c9bec77c14cfa5d9777db2223fdc",
+   "status": "Accepted",
+   "final_fee": 2899,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": "\"key may have leaked\"",
+   "time": "2026-11-09T00:15:42Z"
+  },
+  {
+   "step": "payment while frozen is refused",
+   "signer": "agent",
+   "transaction_id": "a1c2ed9561cb11855cb154918f8598d9591f88a01cdb01e286e0a4619419dcef",
+   "status": "OnlyFeeAccepted",
+   "final_fee": 2079,
+   "accepted": false,
+   "expected_ok": false,
+   "reason": "{\"code\": \"TemplateError\", \"message\": \"At instruction #1: Template error: Allowance is frozen\"}",
+   "time": "2026-11-09T00:15:50Z"
+  },
+  {
+   "step": "agent cannot unfreeze",
+   "signer": "agent",
+   "transaction_id": "d2ee88166a2c6c12f430354e7dfeb27dc970d1749bfe7d0383c8f17653fe6102",
+   "status": "OnlyFeeAccepted",
+   "final_fee": 1788,
+   "accepted": false,
+   "expected_ok": false,
+   "reason": "{\"code\": \"AccessDenied\", \"message\": \"At instruction #1: Access Denied: call component method 'unfreeze' on component_a759f048344c22efe92872dd7222d79058eda5d39e500667d2bf4954db0276c1\"}",
+   "time": "2026-11-09T00:15:55Z"
+  },
+  {
+   "step": "owner unfreezes",
+   "signer": "owner",
+   "transaction_id": "72b72f27ab485533a4521a44a8b85d74484af83387dd65c41d535218f3221ff8",
+   "status": "Accepted",
+   "final_fee": 3255,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:16:00Z"
+  },
+  {
+   "step": "agent pays 1.00 after unfreeze",
+   "signer": "agent",
+   "transaction_id": "88960a33a5a5339b79b8443b40db3d572ed756f7a584d59acb6e6226a69e3a41",
+   "status": "Accepted",
+   "final_fee": 4098,
+   "accepted": true,
+   "expected_ok": true,
+   "reason": null,
+   "time": "2026-11-09T00:16:06Z"
+  }
+ ],
+ "fee_topups": [
+  {
+   "to": "inference-api",
+   "transaction_id": "fb83958588cdfbb92b1feaa96951a13089064e4abfea77fc16c44f732086ae4a"
+  },
+  {
+   "to": "gpu-vendor",
+   "transaction_id": "97d84e0d01359f59e263f0f1969dbdb1d9125da1fcafccaec94815577d77efd7"
+  }
+ ],
+ "accounts": {
+  "owner": "component_b0dbca42eb0e203851325df53b37862e8ac85a37dac4ba5a69e1e604fedaf0f9",
+  "agent": "component_7ee3e329531dfd678e59d1a9611cf2daf7b712ce0598e46a9575aca5ec0b1168",
+  "inference-api": "component_b463e82212321b3600998b2cf90fd49df06c92e3001bb8513fb6d5b2fc335d8d",
+  "gpu-vendor": "component_94eba56c4f97aabe4e738c69a74bae6bfe94c01f4df8b29482826b963dd1477f"
+ },
+ "agent_public_key": "1c6dfbda990f5fe2460b7fb7581654020b21678f4debda20e5dd0ed6dbf8a858",
+ "demo_token": {
+  "component": "component_75344c8fa809337e144aec5c389f747cc284e04e72bfc0d5b8be5a2d285f71bc",
+  "resource": "resource_755eacb68bb02cc081f1e9eae77229060fb8cc2f37ff3906563f56bca345c253"
+ },
+ "allowance": {
+  "component": "component_a759f048344c22efe92872dd7222d79058eda5d39e500667d2bf4954db0276c1",
+  "admin_badge": "resource_a721c1ee82df42c4f5d6b14c3600c5ec012edf6d92d1b2ea6df1143b50f5ba9a"
+ },
+ "final_balances": {
+  "inference-api": [
+   {
+    "resource": "resource_755eacb68bb02cc081f1e9eae77229060fb8cc2f37ff3906563f56bca345c253",
+    "balance": "600"
+   }
+  ],
+  "gpu-vendor": [
+   {
+    "resource": "resource_755eacb68bb02cc081f1e9eae77229060fb8cc2f37ff3906563f56bca345c253",
+    "balance": "2000"
+   }
+  ]
+ }
+}

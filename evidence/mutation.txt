@@ -1,0 +1,6 @@
+Mutation check (2026-11-09): each mutation applied to src/lib.rs, full suite rerun, original restored.
+M1 remove per-payment cap check            -> FAILED 12 passed; 2 failed
+M2 epoch window never resets spent amount  -> FAILED 13 passed; 1 failed
+M3 ignore reserved funds                   -> FAILED 12 passed; 2 failed
+M4 ignore frozen flag                      -> FAILED 13 passed; 1 failed
+Unmutated: test result: ok. 14 passed; 0 failed

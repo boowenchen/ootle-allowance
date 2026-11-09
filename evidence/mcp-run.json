@@ -1,0 +1,10 @@
+{
+ "network": "esmeralda",
+ "allowance": "component_a759f048344c22efe92872dd7222d79058eda5d39e500667d2bf4954db0276c1",
+ "calls": [
+  {"tool": "allowance_pay", "amount": 150, "memo": "mcp call #1", "payee": "inference-api", "status": "Accepted",
+   "transaction_id": "a03f65201497d774c40da6f7195640423495ff94fb7fb953ce5bf60770ee158b", "fee": 4092},
+  {"tool": "allowance_pay", "amount": 100, "payee": "gpu-vendor (not allowlisted)", "isError": true,
+   "error": "Dry-run transaction rejected: Template error: Payee is not allowlisted"}
+ ]
+}

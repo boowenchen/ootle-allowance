@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Allowance · agent spending on Tari Ootle</title>
+<meta name="description" content="Live status of a spend-limited Allowance account for AI agents on Tari Ootle: budget, payees, requests and every payment.">
+<style>
+  :root {
+    --bg: #f6f5f1; --panel: #ffffff; --ink: #1c1b19; --muted: #6b675f; --line: #e3e0d8;
+    --accent: #5b3df5; --ok: #1f7a4d; --warn: #b4540a; --bad: #b42318; --chip: #efedf8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121214; --panel: #1b1b1f; --ink: #ecebe8; --muted: #9b978f; --line: #2c2c31;
+      --accent: #9d8cff; --ok: #4cc38a; --warn: #f0a050; --bad: #f97066; --chip: #25233a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121214; --panel: #1b1b1f; --ink: #ecebe8; --muted: #9b978f; --line: #2c2c31;
+    --accent: #9d8cff; --ok: #4cc38a; --warn: #f0a050; --bad: #f97066; --chip: #25233a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 28px 16px 64px; }
+  header h1 { font-size: 26px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header p { margin: 0; color: var(--muted); }
+  .bar { display: flex; gap: 8px; margin: 20px 0; flex-wrap: wrap; }
+  .bar input { flex: 1 1 320px; min-width: 0; padding: 9px 11px; border: 1px solid var(--line);
+               border-radius: 8px; background: var(--panel); color: var(--ink); font: 13px ui-monospace, monospace; }
+  button { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--accent); background: var(--accent);
+           color: #fff; font-weight: 600; cursor: pointer; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .k { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .v { font-size: 24px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .sub { color: var(--muted); font-size: 13px; }
+  .meter { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+  .meter > i { display: block; height: 100%; background: var(--accent); width: 0; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .pill.ok { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+  .pill.bad { background: color-mix(in srgb, var(--bad) 16%, transparent); color: var(--bad); }
+  h2 { font-size: 16px; margin: 28px 0 10px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .mono { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; }
+  .tag { display: inline-block; padding: 1px 7px; border-radius: 6px; background: var(--chip); font-size: 12px; font-weight: 600; }
+  .scroll { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+  .err { color: var(--bad); }
+  a { color: var(--accent); }
+  footer { margin-top: 36px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Allowance</h1>
+    <p>A spend-limited account an AI agent pays from on Tari Ootle. Caps, budgets and payees are enforced by the template; this page reads it straight from the network.</p>
+  </header>
+
+  <div class="bar">
+    <input id="addr" spellcheck="false" aria-label="Allowance component address">
+    <button id="load">Load</button>
+  </div>
+  <p id="msg" class="sub"></p>
+
+  <section class="grid" id="cards"></section>
+
+  <div class="two">
+    <section>
+      <h2>Agents</h2>
+      <div class="scroll"><table id="agents"><thead><tr><th>Label</th><th>Public key</th></tr></thead><tbody></tbody></table></div>
+    </section>
+    <section>
+      <h2>Allowlisted payees</h2>
+      <div class="scroll"><table id="payees"><thead><tr><th>Label</th><th>Account</th></tr></thead><tbody></tbody></table></div>
+    </section>
+  </div>
+
+  <h2>Open requests</h2>
+  <div class="scroll"><table id="pending"><thead><tr><th>#</th><th>Payee</th><th>Memo</th><th class="num">Amount</th></tr></thead><tbody></tbody></table></div>
+
+  <h2>Activity</h2>
+  <div class="scroll"><table id="events"><thead><tr><th>Event</th><th>Details</th><th>Transaction</th></tr></thead><tbody></tbody></table></div>
+
+  <footer>
+    Network: Esmeralda testnet · indexer <span class="mono" id="idx"></span> ·
+    <a href="https://github.com/boowenchen/ootle-allowance">source</a>
+  </footer>
+</main>
+
+<script type="module">
+import { Decoder } from "https://cdn.jsdelivr.net/npm/cbor-x@1.6.0/+esm";
+
+const INDEXER = "https://esme-indexer-a.ootle.tari.com";
+const DEFAULT = "component_a759f048344c22efe92872dd7222d79058eda5d39e500667d2bf4954db0276c1";
+const dec = new Decoder({ mapsAsObjects: false, useRecords: false });
+const $ = (id) => document.getElementById(id);
+const hex = (b) => Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
+const val = (t) => (t && t.value !== undefined && t.tag !== undefined ? t.value : t);
+const addr = (prefix, t) => prefix + "_" + hex(val(t));
+const short = (s) => (s.length > 24 ? s.slice(0, 14) + "…" + s.slice(-8) : s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+let decimals = 2;
+const fmt = (n) => (Number(n) / 10 ** decimals).toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+
+async function get(path) {
+  const r = await fetch(INDEXER + path);
+  if (!r.ok) throw new Error(path + " → HTTP " + r.status);
+  return r.json();
+}
+const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+async function substate(id) {
+  const j = await get("/substates/" + id);
+  return dec.decode(b64(j.state.up.substate));
+}
+
+async function load(id) {
+  $("msg").textContent = "Loading…";
+  try {
+    const comp = await substate(id);
+    const s = comp[1][0][1][0];
+    const [vaultT, , agents, payees, policy, windowEpoch, windowSpent, windowCount, reserved, pending, , frozen, totalSpent, paymentCount] = s;
+    const vault = await substate(addr("vault", vaultT));
+    const balance = vault[1][0][0][1][1];
+    const stats = await get("/epoch-manager/stats");
+    const epoch = stats.current_epoch;
+    const [cap, budget, maxCount] = policy;
+    const spentNow = epoch === Number(windowEpoch) ? Number(windowSpent) : 0;
+    const countNow = epoch === Number(windowEpoch) ? Number(windowCount) : 0;
+    const free = Number(balance) - Number(reserved);
+
+    $("cards").innerHTML = [
+      card("Status", frozen ? '<span class="pill bad">Frozen</span>' : '<span class="pill ok">Active</span>', "epoch " + epoch),
+      card("Available", fmt(free) + " dUSD", fmt(reserved) + " reserved of " + fmt(balance)),
+      card("This epoch", fmt(spentNow) + " / " + fmt(budget), countNow + " of " + maxCount + " payments", spentNow / Number(budget)),
+      card("Per-payment cap", fmt(cap) + " dUSD", "larger amounts need a request"),
+      card("Paid out", fmt(totalSpent) + " dUSD", paymentCount + " payments"),
+    ].join("");
+
+    fill("agents", [...agents].map(([k, label]) => [esc(label), `<span class="mono">${hex(k)}</span>`]));
+    fill("payees", [...payees].map(([k, label]) => [esc(label), `<span class="mono">${addr("component", k)}</span>`]));
+    fill("pending", [...pending].map(([n, r]) => [
+      "#" + n, `<span class="mono">${short(addr("component", r[1]))}</span>`, esc(r[3]), `<span class="num">${fmt(r[2])}</span>`,
+    ]), "No open requests");
+
+    const ev = await get(`/transactions/events?limit=100&substate_id=${id}`);
+    const rows = [];
+    for (const [tx, raw] of ev.events) {
+      const e = dec.decode(b64(raw));
+      const topic = e[2];
+      if (!topic.startsWith("Allowance.")) continue;
+      const p = val(e[3]);
+      const m = p instanceof Map ? p : new Map(Object.entries(p || {}));
+      const name = topic.slice(10);
+      let detail = "";
+      if (m.has("amount") && name !== "Created") detail += `<b>${fmt(m.get("amount"))}</b> `;
+      if (m.has("payee")) detail += "→ " + `<span class="mono">${short(m.get("payee"))}</span> `;
+      if (m.has("memo")) detail += "· " + esc(m.get("memo"));
+      if (m.has("reason")) detail += esc(m.get("reason"));
+      if (m.has("id")) detail = "request #" + esc(m.get("id")) + " " + detail;
+      if (name === "Created") detail = `cap ${fmt(m.get("per_payment_cap"))}, budget ${fmt(m.get("per_epoch_budget"))}/epoch, ${esc(m.get("max_payments_per_epoch"))} payments/epoch`;
+      if (name === "AgentAdded" || name === "PayeeAllowed") detail = `<span class="mono">${short(m.get("agent") || m.get("payee"))}</span>`;
+      rows.push([`<span class="tag">${esc(name)}</span>`, detail,
+        `<a class="mono" href="${INDEXER}/transactions/${tx}/result" target="_blank" rel="noopener">${tx.slice(0, 10)}…</a>`]);
+    }
+    fill("events", rows, "No events yet");
+    $("msg").textContent = "";
+  } catch (e) {
+    $("msg").innerHTML = `<span class="err">${esc(e.message)}</span>`;
+  }
+}
+
+function card(k, v, sub, ratio) {
+  const meter = ratio === undefined ? "" : `<div class="meter"><i style="width:${Math.min(100, ratio * 100).toFixed(1)}%"></i></div>`;
+  return `<div class="card"><div class="k">${k}</div><div class="v">${v}</div><div class="sub">${sub}</div>${meter}</div>`;
+}
+function fill(id, rows, empty = "None") {
+  const tb = $(id).querySelector("tbody");
+  const cols = $(id).querySelectorAll("th").length;
+  tb.innerHTML = rows.length ? rows.map((r) => "<tr>" + r.map((c) => `<td>${c}</td>`).join("") + "</tr>").join("")
+    : `<tr><td colspan="${cols}" class="sub">${empty}</td></tr>`;
+}
+
+const q = new URLSearchParams(location.search).get("component") || DEFAULT;
+$("addr").value = q;
+$("idx").textContent = INDEXER.replace("https://", "");
+$("load").onclick = () => {
+  const v = $("addr").value.trim();
+  history.replaceState(null, "", "?component=" + encodeURIComponent(v));
+  load(v);
+};
+load(q);
+</script>
+</body>
+</html>
